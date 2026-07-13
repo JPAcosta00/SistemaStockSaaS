@@ -1,0 +1,31 @@
+# ==========================================
+# 1. Filtros para el Backend (.NET / IDEs)
+# ==========================================
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+x64/
+x86/
+[Bb]in/
+[Oo]bj/
+.vs/
+.idea/
+.vscode/
+*.user
+*.suo
+
+# ==========================================
+# 2. Filtros para el Frontend (Node / React)
+# ==========================================
+node_modules/
+/dist
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ==========================================
+# 3. Filtros específicos de Vercel
+# ==========================================
+.vercel
