@@ -51,6 +51,45 @@ public class ProductService : IProductService
         };
     }
 
+    public async Task<IEnumerable<Product>> GetFilteredProductsAsync(ProductReportFilterDto filter, Guid tenantId){
+        //busca todos los productos del usuario actual
+        var products = await _productRepository.GetAllAsync(p => p.TenantId == tenantId && p.IsActive);
+    
+        // Si la lista está vacía, se retorna directamente 
+        if (products == null) return Enumerable.Empty<Product>();
+
+        // filtro de Nombre 
+        if (!string.IsNullOrWhiteSpace(filter.Name)){
+            products = products.Where(p => p.Name != null && 
+                                       p.Name.Contains(filter.Name, StringComparison.OrdinalIgnoreCase));
+        }
+
+        // filtro de Período
+        if (!string.IsNullOrWhiteSpace(filter.Period)){
+            var fechaLimite = DateTime.UtcNow;
+
+            switch (filter.Period.ToLower()){
+                case "hoy":
+                    fechaLimite = DateTime.Today;
+                    products = products.Where(p => p.UpdatedAt >= fechaLimite);
+                    break;
+                case "semana":
+                    fechaLimite = DateTime.Today.AddDays(-7);
+                    products = products.Where(p => p.UpdatedAt >= fechaLimite);
+                    break;
+                case "mes":
+                    fechaLimite = DateTime.Today.AddMonths(-1);
+                    products = products.Where(p => p.UpdatedAt >= fechaLimite);
+                    break;
+                case "anio":
+                    fechaLimite = DateTime.Today.AddYears(-1);
+                    products = products.Where(p => p.UpdatedAt >= fechaLimite);
+                    break;
+            }
+        }
+
+        return products.ToList();
+    }
     public async Task<ProductResponseDto> CreateProductAsync(ProductCreateDto dto){
 
         var newProduct = new Product
@@ -82,7 +121,6 @@ public class ProductService : IProductService
             IsActive = newProduct.IsActive
         };
     }
-
     public async Task<bool> DeleteProductAsync(Guid id){
         // El repositorio lo busca (EF Core lo filtra por Tenant automáticamente)
          var product = await _productRepository.GetByIdAsync(id); 

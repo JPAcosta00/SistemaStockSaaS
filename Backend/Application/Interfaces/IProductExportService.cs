@@ -5,11 +5,8 @@ namespace Application.Interfaces
     public interface IProductExportService
     {
         //arma los archivos de cada tipo
-        Task<byte[]> GenerateExcelAsync(List<Product> productIds);
-        Task<byte[]> GeneratePdfAsync(List<Product> productIds);
+        Task<byte[]> GenerateExcelAsync(IEnumerable<Product> products);
+        Task<byte[]> GeneratePdfAsync(IEnumerable<Product> products);
 
-        //realiza todos los filtros 
-        Task<byte[]> ExportProductsToPdfAsync(ProductReportFilterDto filters, Guid tenantId);
-        Task<byte[]> ExportProductsToExcelAsync(ProductReportFilterDto filters, Guid tenantId);
     }
 }

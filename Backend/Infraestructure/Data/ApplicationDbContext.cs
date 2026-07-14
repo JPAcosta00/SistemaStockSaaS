@@ -2,6 +2,7 @@ using Application.Interfaces;
 using Domain.Entities;
 using Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace Infraestructure.Data;
 
@@ -13,6 +14,7 @@ public class ApplicationDbContext : DbContext
         _tenantProvider = tenantProvider;
     }
 
+    public Guid? CurrentTenantId => _tenantProvider.GetTenantId();
     // tablas de la base de datos
     public DbSet<Tenant> Tenants { get; set; }
     public DbSet<User> Users { get; set; }
@@ -140,23 +142,24 @@ public class ApplicationDbContext : DbContext
     }
 
     // Generador dinámico de expresiones Lambda para armar el "WHERE e.TenantId = actual"
-    private System.Linq.Expressions.LambdaExpression CreateTenantFilterExpression(Type type)
-    {
-        var parameter = System.Linq.Expressions.Expression.Parameter(type, "e");
-        var property = System.Linq.Expressions.Expression.Property(parameter, "TenantId");
-        
-        var providerMethod = typeof(ITenantProvider).GetMethod(nameof(ITenantProvider.GetTenantId));
-        var tenantIdExpression = System.Linq.Expressions.Expression.Call(
-            System.Linq.Expressions.Expression.Constant(_tenantProvider), 
-            providerMethod!
-        );
+    private LambdaExpression CreateTenantFilterExpression(Type entityType){
+         // 1. Creamos el parámetro de la entidad (ej: 'p' para Product)
+        var parameter = Expression.Parameter(entityType, "e");
 
-        var body = System.Linq.Expressions.Expression.Equal(
-            property, 
-            System.Linq.Expressions.Expression.Convert(tenantIdExpression, typeof(Guid))
-        );
+        // 2. Buscamos la propiedad TenantId en la entidad (e.TenantId)
+        var property = Expression.Property(parameter, "TenantId");
 
-        return System.Linq.Expressions.Expression.Lambda(body, parameter);
+        // 3. ¡ESTA ES LA CLAVE!: Apuntamos dinámicamente a la propiedad del DbContext
+        var dbContextInstance = Expression.Constant(this);
+        var tenantIdProperty = Expression.Property(dbContextInstance, nameof(CurrentTenantId));
+
+        var convertedTenantId = Expression.Convert(tenantIdProperty, typeof(Guid));
+
+        // 5. Creamos la comparación usando la versión convertida (e.TenantId == (Guid)DbContext.CurrentTenantId)
+        var body = Expression.Equal(property, convertedTenantId);
+
+        // 5. Devolvemos la expresión lambda armada (e => e.TenantId == CurrentTenantId)
+        return Expression.Lambda(body, parameter);
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default){

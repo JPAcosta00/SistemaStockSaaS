@@ -31,16 +31,32 @@ public class ProductsController : ControllerBase
     // GET: api/products
     // Trae SOLO los productos del comercio dueño del Token
     [HttpGet]
-    public async Task<IActionResult> GetAll()
-    {
-        // EF Core inyecta el "WHERE TenantId = ..." 
-        var products = await _productRepository.GetAllAsync(p => p.IsActive);
-        return Ok(products);
+    [Authorize]
+    public async Task<ActionResult<IEnumerable<Product>>> GetAll([FromQuery] ProductReportFilterDto filter){
+        // Delegamos el filtrado y la obtención al servicio de productos
+        var tenantClaim = User.FindFirst("TenantId")?.Value;
+
+        if (string.IsNullOrEmpty(tenantClaim))
+        {
+            return Unauthorized("No se pudo determinar el Tenant del usuario actual.");
+        }
+
+        // Convierto el string a guid
+        if (!Guid.TryParse(tenantClaim, out Guid tenantId))
+        {
+            return BadRequest("El identificador del Tenant no es válido.");
+        }
+
+        // delego la busqueda
+        var productos = await _productService.GetFilteredProductsAsync(filter, tenantId);
+        
+        return Ok(productos);
     }
 
     // GET: api/products/barcode/{barcode}
     // Busca un producto específico por código de barras dentro del Tenant
     [HttpGet("barcode/{barcode}")]
+    [Authorize]
     public async Task<IActionResult> GetByBarcode(string barcode){
         var product = await _productRepository.GetByBarcodeAsync(barcode);
         
@@ -75,7 +91,7 @@ public class ProductsController : ControllerBase
 
     //importar productos desde un archivo excel 
     [HttpPost("import")]
-    [Authorize] // 
+    [Authorize] 
     public async Task<IActionResult> Import(IFormFile file){
          // Valido que se este mandando un archivo
         if (file == null || file.Length == 0){
@@ -115,37 +131,51 @@ public class ProductsController : ControllerBase
     [HttpGet("export-excel")]
     [Authorize]
     public async Task<IActionResult> ExportExcel([FromQuery] ProductReportFilterDto filters){
-        var tenantClaim = User.FindFirst("TenantId")?.Value ?? string.Empty;
-        var tenantId = Guid.Parse(tenantClaim);
+        // TenantId del usuario actual
+        var tenantClaim = User.FindFirst("TenantId")?.Value; 
+        
+        if (!Guid.TryParse(tenantClaim, out Guid tenantId))
+        {
+            return BadRequest("El identificador del Tenant no es válido.");
+        }
 
-        byte[] excelBytes = await _exportService.ExportProductsToExcelAsync(filters, tenantId);
-    
-        // Se retorna el archivo con el content Type
+      
+        var productosFiltrados = await _productService.GetFilteredProductsAsync(filters, tenantId);
+
+        var fileBytes = await _exportService.GenerateExcelAsync(productosFiltrados);
+
+        // se retorna el archivo
         return File(
-            excelBytes, 
+            fileBytes, 
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", 
-            "ReporteProductos.xlsx"
+            $"ReporteProductos_{DateTime.UtcNow:yyyyMMdd}.xlsx"
         );
     }
 
     [HttpGet("export-pdf")]
     [Authorize]
     public async Task<IActionResult> ExportPdf([FromQuery] ProductReportFilterDto filters){
-        // Obtengo el TenantId de la sesión actual
-        var tenantIdClaim = User.FindFirst("TenantId")?.Value;
-    
-        if (string.IsNullOrEmpty(tenantIdClaim)){
-            return BadRequest("No se encontró el TenantId en la sesión actual.");
+        // TenantId del usuario actual
+        var tenantClaim = User.FindFirst("TenantId")?.Value; 
+       
+        if (!Guid.TryParse(tenantClaim, out Guid tenantId))
+        {
+            return BadRequest("El identificador del Tenant no es válido.");
         }
-    
-        Guid tenantId = Guid.Parse(tenantIdClaim);
 
-        byte[] pdfBytes = await _exportService.ExportProductsToPdfAsync(filters, tenantId);
-    
-        return File(pdfBytes, "application/pdf", "ReporteProductos.pdf");
+        var productosFiltrados = await _productService.GetFilteredProductsAsync(filters, tenantId);
+
+        var fileBytes = await _exportService.GeneratePdfAsync(productosFiltrados);
+
+        return base.File(
+            fileBytes, 
+            "application/pdf", 
+            $"ReporteProductos_{DateTime.UtcNow:yyyyMMdd}.pdf"
+        );
     }
 
     [HttpPut("{id:guid}")]
+    [Authorize]
     public async Task<IActionResult> UpdateProduct(Guid id, [FromBody] UpdateProductDto dto){
         try{
             await _productService.UpdateProductAsync(id, dto);

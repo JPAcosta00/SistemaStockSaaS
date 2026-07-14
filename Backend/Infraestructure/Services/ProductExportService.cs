@@ -7,7 +7,8 @@ using Infraestructure.Data;
 using System.Linq;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
-using QuestPDF.Infrastructure;      //"insfrastructure" xq en la libreria se llama asi
+using QuestPDF.Infrastructure;
+using Application.DTOs;      //"insfrastructure" xq en la libreria se llama asi
 
 namespace Infraestructure.Services
 {
@@ -19,45 +20,7 @@ namespace Infraestructure.Services
         {
             _context = context;
         }
-
-        private IQueryable<Product> ApplyProductFilters(ProductReportFilterDto filters, Guid tenantId){
-            // Filtro base obligatorio por Tenant
-            var query = _context.Products
-                .Where(p => p.TenantId == tenantId)
-                .AsQueryable();
-
-            // Filtro opcional por Nombre
-            if (!string.IsNullOrWhiteSpace(filters.Name)){
-                query = query.Where(p => p.Name.Contains(filters.Name));
-            }
-
-            // Filtro por Período de Tiempo
-            if (!string.IsNullOrWhiteSpace(filters.Period)){
-                DateTime now = DateTime.Today; 
-                DateTime startDate = now;
-
-                switch (filters.Period.ToLower()){
-                    case "hoy":
-                        startDate = now; 
-                        break;
-                    case "semana":
-                        int diff = (7 + (now.DayOfWeek - DayOfWeek.Monday)) % 7;
-                        startDate = now.AddDays(-1 * diff);
-                        break;
-                    case "mes":
-                        startDate = new DateTime(now.Year, now.Month, 1); 
-                        break;
-                    case "anio":
-                        startDate = new DateTime(now.Year, 1, 1); 
-                        break;
-                }
-
-                query = query.Where(p => p.UpdatedAt >= startDate);
-            }
-
-            return query;
-        }
-        public async Task<byte[]> GenerateExcelAsync(List<Product> productIds){
+        public async Task<byte[]> GenerateExcelAsync(IEnumerable<Product> productIds){
             // EF filtra por tenant automaticamente
             IQueryable<Product> query = _context.Products;
 
@@ -110,22 +73,8 @@ namespace Infraestructure.Services
             }
         
         }
-        public async Task<byte[]> ExportProductsToExcelAsync(ProductReportFilterDto filters, Guid tenantId){
-            // Delega al motodo para que aplique los filtros 
-            var products = await ApplyProductFilters(filters, tenantId).ToListAsync();
-
-            // Dibuja el Excel con ClosedXML
-            return await this.GenerateExcelAsync(products);
-        }
-        public async Task<byte[]> ExportProductsToPdfAsync(ProductReportFilterDto filters, Guid tenantId){
-            // Delega al metodo que filtra
-            var products = await ApplyProductFilters(filters, tenantId).ToListAsync();
-
-            // mando a armar el archivo pdf
-            return await this.GeneratePdfAsync(products);
-        }
     
-        public async Task<byte[]> GeneratePdfAsync(List<Product> productIds){
+        public async Task<byte[]> GeneratePdfAsync(IEnumerable<Product> productIds){
             // obtiene los productos desde la bd
             IQueryable<Product> query = _context.Products;
 
