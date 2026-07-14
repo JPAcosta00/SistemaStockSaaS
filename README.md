@@ -9,11 +9,11 @@ Aplicación web para administrar productos, controlar el stock y registrar venta
 |---------|----------|
 | .NET (C#) | React |
 | Entity Framework Core | Vite |
-| MySQL | JavaScript |
+| MySQL |  |
 
 ## ✨ Funcionalidades
 
-- Gestión de productos (ABM)
+- Gestión de productos 
 - Control de stock
 - Registro de ventas
 - Estadísticas e indicadores del negocio
