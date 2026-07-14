@@ -4,14 +4,12 @@ Aplicación web para administrar productos, controlar el stock y registrar venta
 
 ## 🚀 Tecnologías
 
-### Backend
-- .NET (C#)
-- Entity Framework Core
-- MySQL
 
-### Frontend
-- React
-- Vite
+| Backend | Frontend |
+|---------|----------|
+| .NET (C#) | React |
+| Entity Framework Core | Vite |
+| MySQL | JavaScript |
 
 ## ✨ Funcionalidades
 
