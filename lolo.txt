@@ -3,3 +3,7 @@ Para correr el backend:
 
 Para correr el front:
   /FRONTEND/saasstock-front    npm run dev
+
+Perfil de admin: 
+- admin@supercentral.com
+- Admin123!
