@@ -1,0 +1,5 @@
+Para correr el backend:
+  /BACKEND/API   dotnet run 
+
+Para correr el front:
+  /FRONTEND/saasstock-front    npm run dev
