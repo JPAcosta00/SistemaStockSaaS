@@ -99,6 +99,9 @@ builder.Services.AddScoped<IJwtTokenBuilder, JwtTokenBuilder>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IProductImportService, ProductImportService>();
 builder.Services.AddScoped<IProductExportService, ProductExportService>();
+builder.Services.AddScoped<ISaleRepository, SaleRepository>();
+builder.Services.AddScoped<ISaleService, SaleService>();
+builder.Services.AddScoped<IInventoryStatsService, InventoryStatsService>();
 
 // --- ROBUSTEZ Y VALIDACIONES ---
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();

@@ -18,7 +18,7 @@ public class Product : IMustHaveTenant
     public Guid TenantId { get; set; }
     public Tenant Tenant { get; set; } = null!;
 
-    public void UpdateDetails(string name, string barcode, decimal price, int stockMinimum, string description){
+    public void UpdateDetails(string name, string barcode, decimal price, int stActual, int stockMinimum, string description, bool estado){
         if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("El nombre del producto no puede estar vacío.");
         if (price < 0) throw new ArgumentException("El precio no puede ser negativo.");
         if (stockMinimum < 0) throw new ArgumentException("El stock mínimo no puede ser negativo.");
@@ -26,7 +26,9 @@ public class Product : IMustHaveTenant
         Name = name;
         Barcode = barcode;
         Price = price;
+        Stock = stActual;
         MinimumStock = stockMinimum;
         Description = description;
+        IsActive = estado;
     }
 }

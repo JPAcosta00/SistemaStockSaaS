@@ -134,13 +134,12 @@ public class ProductService : IProductService
         return true;
     }
     public async Task UpdateProductAsync(Guid productId, UpdateProductDto dto){
-        
         //se busca el producto y se modifica 
         var product = await _productRepository.GetByIdAsync(productId);
         if (product == null)
             throw new KeyNotFoundException("El producto especificado no existe o no tenés permisos para verlo.");
 
-        product.UpdateDetails(dto.Name, dto.Barcode, dto.Price, dto.StockMinimum, dto.Description);
+        product.UpdateDetails(dto.Name, dto.Barcode, dto.Price, dto.StockActual, dto.StockMinimum, dto.Description, dto.State);
 
         await _productRepository.SaveChangesAsync();
     }

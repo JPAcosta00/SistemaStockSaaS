@@ -35,6 +35,7 @@ public class ApplicationDbContext : DbContext
          modelBuilder.Entity<SaleDetail>().Property(sd => sd.Id).HasColumnType("char(36)");
          modelBuilder.Entity<SaleDetail>().Property(sd => sd.SaleId).HasColumnType("char(36)");
          modelBuilder.Entity<SaleDetail>().Property(sd => sd.ProductId).HasColumnType("char(36)");
+         modelBuilder.Entity<SaleDetail>().Property(sd => sd.TenantId).HasColumnType("char(36)");
 
          // Configuración de clave primaria para Tenant
          modelBuilder.Entity<Tenant>(entity =>{

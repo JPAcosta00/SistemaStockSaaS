@@ -53,6 +53,7 @@ public class ProductImportService : IProductImportService
             string description = row.Cell(3).GetValue<string>().Trim();
             decimal price = row.Cell(4).GetValue<decimal>();
             int stock = row.Cell(5).GetValue<int>();
+            int minimumStock = row.Cell(5).GetValue<int>();
 
             // Se arma el producto temporal
             var product = new Product
@@ -62,7 +63,9 @@ public class ProductImportService : IProductImportService
                 Description = description,
                 Price = price,
                 Stock = stock,
-                IsActive = true
+                MinimumStock = minimumStock,
+                IsActive = true,
+                UpdatedAt = DateTime.Now
                 // El TenantId se va a inyectar solo en el DbContext 
             };
 
