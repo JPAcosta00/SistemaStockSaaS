@@ -88,7 +88,7 @@ builder.Services.AddControllers();
 //para muchos tenants
 builder.Services.AddHttpContextAccessor(); // Requerido para leer los headers/tokens HTTP
 // Se inyecta el TenantProvider que lee el JWT. 
-builder.Services.AddScoped<ITenantProvider, Infraestructure.Security.TenantProvider>();
+builder.Services.AddScoped<ITenantProvider, TenantProvider>();
 
 // --- REPOSITORIOS Y SERVICIOS ---
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
@@ -102,6 +102,7 @@ builder.Services.AddScoped<IProductExportService, ProductExportService>();
 builder.Services.AddScoped<ISaleRepository, SaleRepository>();
 builder.Services.AddScoped<ISaleService, SaleService>();
 builder.Services.AddScoped<IInventoryStatsService, InventoryStatsService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 // --- ROBUSTEZ Y VALIDACIONES ---
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();

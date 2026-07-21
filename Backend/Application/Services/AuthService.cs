@@ -104,12 +104,8 @@ public class AuthService : IAuthService
         if (user == null)
             throw new Exception("El usuario especificado no existe en el sistema.");
 
-        //  se modifica todos los campos que vienen en el DTO
-        user.Username = dto.Username;
-        user.Email = dto.Email;
-        user.Role = dto.Role;
-        user.IsActive = dto.IsActive;
-        user.TenantId = dto.TenantId; 
+    
+        user.updateDatos(dto.Username, dto.Role, dto.IsActive, dto.Email, dto.TenantId);
 
         await _userRepository.SaveChangesAsync();
     }

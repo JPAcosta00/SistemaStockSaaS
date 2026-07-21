@@ -16,4 +16,14 @@ public class User : IMustHaveTenant
     // FK al Tenant: Cada usuario pertenece a UN SOLO supermercado
     public Guid TenantId { get; set; }
     public Tenant Tenant { get; set; } = null!;
+
+    public void updateDatos(String userNombre, String rol, bool? estado, String mail, Guid tenantId)
+    {
+        Username = userNombre;
+        Role = rol;
+        if (estado.HasValue)             //si trae un valor, se actualiza
+            IsActive = estado.Value;
+        Email = mail; 
+        TenantId = tenantId;
+    }
 }
