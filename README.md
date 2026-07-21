@@ -27,3 +27,8 @@ Aplicación web para administrar productos, controlar el stock y registrar venta
 - Inyección de Dependencias
 - Entity Framework Core
 - API REST
+
+- ## 🔗 Enlaces Rápidos
+
+* 🌐 **Aplicación Web (Producción):** [SaaS Stock en Vercel](https://sistema-stock-saa-s-gjff.vercel.app/)
+* ⚙️ **Backend API (Render):** [Documentación / API](https://saasstock-backend.onrender.com)
