@@ -5,6 +5,7 @@ import DashboardLayout from '../components/DashboardLayout';
 import Inventario from '../pages/Inventario';
 import Ventas from '../pages/Ventas';
 import Estadisticas from '../pages/Estadisticas'; 
+import Settings from '../pages/Settings'; 
 
 const PrivateRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth(); 
@@ -58,7 +59,7 @@ export default function AppRoutes() {
       <Route path="/ventas" element={<PrivateRoute><Ventas /></PrivateRoute>} />
       
       {/* CONFIGURACIÓN (temporal) */}
-      <Route path="/settings" element={<PrivateRoute><h1 className="text-white text-2xl">Configuración (Próximamente)</h1></PrivateRoute>} />
+      <Route path="/settings" element={<PrivateRoute><Settings /></PrivateRoute>} />
 
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>

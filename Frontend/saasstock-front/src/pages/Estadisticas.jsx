@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import MobileStatsQR from '../components/MobileStatsQR';
 import { Search, Calendar, Loader2, DollarSign, ShoppingBag, Package, AlertTriangle } from 'lucide-react';
 
 export default function Estadisticas() {
@@ -164,14 +165,10 @@ export default function Estadisticas() {
             {/* Tarjeta de Resumen Dinámico */}
             <div className="bg-zinc-900 p-6 rounded-xl border border-zinc-800 flex flex-col justify-between">
               <div className="space-y-4">
-                <h3 className="font-bold text-zinc-100 text-base">Análisis de Grupo</h3>
-                <p className="text-sm text-zinc-400 leading-relaxed">
-                  Estás visualizando un total de <strong className="text-zinc-200">{data.metrics.activeProductsCount} productos</strong>. 
-                  De este segmento, hay <strong className="text-amber-400">{data.metrics.lowStockAlertsCount} que necesitan reposición urgente</strong> para no interrumpir el flujo de ventas.
-                </p>
-                <div className="p-3 bg-zinc-950 rounded-lg border border-zinc-850 text-xs text-zinc-500">
-                  Las estadísticas de facturación y unidades corresponden exclusivamente a órdenes registradas en los últimos 30 días para este conjunto filtrado.
-                </div>
+                {/* Columna Derecha: Widget con el Código QR */}
+                    <div className="lg:col-span-1">
+                      <MobileStatsQR />
+                    </div>
               </div>
             </div>
 

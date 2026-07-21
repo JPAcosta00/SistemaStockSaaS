@@ -66,7 +66,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   //metodo para el registro
-  const register = async (name, email, password, companyName) => {
+  const register = async (username, email, password, companyName) => {
     try {
       // Llama al controlador del cliente, que seria AuthController en el metood post (osea crear)
       const response = await apiClient.post('/auth/register', {
