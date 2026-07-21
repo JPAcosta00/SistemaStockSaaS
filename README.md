@@ -31,4 +31,3 @@ Aplicación web para administrar productos, controlar el stock y registrar venta
 - ## 🔗 Enlaces Rápidos
 
 * 🌐 **Aplicación Web (Producción):** [SaaS Stock en Vercel](https://sistema-stock-saa-s-gjff.vercel.app/)
-* ⚙️ **Backend API (Render):** [Documentación / API](https://saasstock-backend.onrender.com)
