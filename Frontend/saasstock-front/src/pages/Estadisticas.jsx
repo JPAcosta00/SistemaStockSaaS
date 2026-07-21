@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import apiClient from '../api/apiClient'
 import MobileStatsQR from '../components/MobileStatsQR';
 import { Search, Calendar, Loader2, DollarSign, ShoppingBag, Package, AlertTriangle } from 'lucide-react';
 
@@ -22,14 +23,11 @@ export default function Estadisticas() {
         const token = sessionStorage.getItem('token'); //recupera el JWT
 
         // Arma los parámetros de consulta que mapean al controlador
-        const response = await axios.get('https://localhost:7046/api/stats/dashboard', {
-          headers: { 
-            Authorization: `Bearer ${token}` 
-          },
-          params: {
-            name: name || undefined,   // Si está vacío, no lo envía para que el backend no filtre
-            period: period || undefined // switch de períodos ("hoy", "semana", etc.)
-          }
+        const response = await apiClient.get('/stats/dashboard', {
+              params: {
+              name: name || undefined,   // Si está vacío, no lo envía
+              period: period || undefined // switch de períodos ("hoy", "semana", etc.)
+            }
         });
         
         setData(response.data);
