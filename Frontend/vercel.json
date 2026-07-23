@@ -1,0 +1,5 @@
+{
+  "outputDirectory": "saasstock-front/dist",
+  "buildCommand": "cd saasstock-front && npm run build",
+  "installCommand": "cd saasstock-front && npm install"
+}
