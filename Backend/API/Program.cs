@@ -20,15 +20,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Obtener la cadena de conexión desde appsettings.json
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-// Registrar el DbContext configurado para MySQL con Pomelo
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseMySql(
-        connectionString,
-        ServerVersion.AutoDetect(connectionString),
-        b => b.MigrationsAssembly("Infrastructure") 
-    )
-);
-
+    options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 30))));
 
 // Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
